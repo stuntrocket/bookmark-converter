@@ -1,6 +1,6 @@
-# Bookmarker Helper - Laravel
+# AnyBox to Static Marks Bookmarker Helper - Laravel
 
-Bookmarker Helper is a Laravel application that converts bookmarks exported in AnyBox JSON format to Static Marks YAML format. This allows you to import your bookmarks into the Static Marks bookmark manager.
+AnyBox to Static Marks Bookmarker Helper is a Laravel application that converts bookmarks exported in AnyBox JSON format to Static Marks YAML format. This allows you to import your bookmarks into the Static Marks bookmark manager.
 
 ## Prerequisites
 To use Bookmarker Helper, you will need the following:
