@@ -2,21 +2,38 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Bookmark;
+use App\Models\Topic;
 use Illuminate\Console\Command;
 use Symfony\Component\Yaml\Yaml;
 use Illuminate\Support\Facades\File;
 
+/**
+ *
+ */
 class JsonToYamlCommand extends Command
 {
+    /**
+     * @var string
+     */
     protected $signature = 'json:yaml {inputFile=storage/app/anybox.json} {outputFile=storage/app/output.yml}';
 
+    /**
+     * @var string
+     */
     protected $description = 'Converts a JSON file to a YAML file with a custom structure compatible with static-marks';
 
+    /**
+     *
+     */
     public function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * @return int
+     */
     public function handle()
     {
         $inputFile = $this->argument('inputFile');
@@ -36,7 +53,7 @@ class JsonToYamlCommand extends Command
         }
 
         // Filter out bookmarks with empty or whitespace-only titles
-        $jsonData = array_filter($jsonData, function($bookmark) {
+        $jsonData = array_filter($jsonData, function ($bookmark) {
             return trim($bookmark['title']) !== '' && trim($bookmark['title']) !== '-';
         });
 
@@ -46,9 +63,16 @@ class JsonToYamlCommand extends Command
 
         $this->info('Successfully converted JSON to custom YAML.');
 
+        $this->arrayToDatabase($transformedData);
+        $this->info('Successfully imported bookmarks into the database.');
+
         return 0;
     }
 
+    /**
+     * @param array $jsonData
+     * @return array
+     */
     private function transformJsonToCompatibleYaml(array $jsonData)
     {
         $yamlData = [];
@@ -74,6 +98,12 @@ class JsonToYamlCommand extends Command
     }
 
 
+    /**
+     * @param $array
+     * @param $indent
+     * @param $isListItem
+     * @return string
+     */
     private function arrayToYaml($array, $indent, $isListItem = false)
     {
         $yaml = '';
@@ -106,5 +136,26 @@ class JsonToYamlCommand extends Command
         return $yaml;
     }
 
+    private function arrayToDatabase(array $bookmarks)
+    {
+        foreach ($bookmarks as $collectionName => $collection) {
+            // first or create topic
+            $topic = Topic::firstOrCreate([
+                'name' => $collectionName,
+            ]);
 
+            foreach ($collection as $title => $url) {
+                if (strlen($url) > 255 || strlen($title) > 255) {
+                    continue;
+                }
+
+                $bookmark = Bookmark::firstOrCreate([
+                    'name' => $title,
+                    'url' => $url,
+                ]);
+
+                $topic->bookmarks()->syncWithoutDetaching($bookmark);
+            }
+        }
+    }
 }

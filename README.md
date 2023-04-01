@@ -1,8 +1,29 @@
-# Bookmarker Helper
+# Bookmarker Helper - Laravel
 
-This will convert the AnyBox JSON format export to a Static Marks format YAML file that can be imported into the [Static Marks](https://github.com/darekkay/static-marks) bookmark manager.
+Bookmarker Helper is a Laravel application that converts bookmarks exported in AnyBox JSON format to Static Marks YAML format. This allows you to import your bookmarks into the Static Marks bookmark manager.
 
-### See Also
+## Prerequisites
+To use Bookmarker Helper, you will need the following:
+
+- PHP 8.1 or later
+- Laravel 9.x or later
+- AnyBox JSON format export of your bookmarks
+
+## Installation
+To get started, follow these steps:
+
+- Clone this repository and navigate to the project directory.
+- Install dependencies by running composer install.
+- Export your bookmarks from AnyBox as JSON.
+- Move the exported file to the storage folder and rename it to anybox.json.
+- Run `php artisan json:yaml` to generate a output.yml file in the storage folder.
+- Import the generated output.yml file into Static Marks using the command `static-marks build storage/output.yml > public/bookmarks.html`
+- Static Marks will create a bookmarks.html file in the public directory.
+- Start the local server by running php artisan serve.
+- Open https://127.0.0.1:8000/bookmarks.html in your browser to view your imported bookmarks.
+
+## References
+For more information on Static Marks and its file format, please see the following:
 
 - https://github.com/darekkay/static-marks
 - https://darekkay.com/static-marks/#file-format
